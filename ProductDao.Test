@@ -1,0 +1,48 @@
+package com.virtusa.shoppersden.entity;
+
+import static org.junit.Assert.*;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.junit.Test;
+
+public class ProductDAOTest {
+
+	@Test
+	public void generateproductid() {
+		int id=0;
+        Connection con=DaoConnection.getConnection();
+        String cmd="select max(productId)+1 prdid from Product";
+        try {
+            PreparedStatement pst=con.prepareStatement(cmd);
+            ResultSet rs=pst.executeQuery();
+            rs.next();
+            id=rs.getInt("prdid");
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        assertEquals(id, new ProductDAO().generateproductid());
+	}
+	@Test
+	public void createProduct(){
+		ProductDetails pd=new ProductDetails();
+		int pid=new ProductDAO().generateproductid();
+		pd.setProductId(pid);
+		pd.setProductName("pnm");
+		pd.setProductPrice(12365);
+		pd.setProductImage("pdimg");
+		pd.setProductStock(23);
+		assertEquals("product added successfully....", new ProductDAO().createProduct(pd));
+		
+	}
+	@Test
+	public void searchProductTest() {
+		assertNotNull(new ProductDAO().searchProductDetails(1));
+		
+	}
+
+}
