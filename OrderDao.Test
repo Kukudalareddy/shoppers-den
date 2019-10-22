@@ -1,0 +1,39 @@
+package com.virtusa.shoppersden.entity;
+
+import static org.junit.Assert.*;
+
+import java.sql.Connection;
+import java.sql.PreparedStatement;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+
+import org.junit.Test;
+
+public class OrderDAOTest {
+
+	@Test
+	public void generateOrderId() {
+		int id=0;
+        Connection con=DaoConnection.getConnection();
+        String cmd="select case when max(orderId) is NULL then 1 else max(orderId)+1 end ordid from orders";
+        try {
+            PreparedStatement pst=con.prepareStatement(cmd);
+            ResultSet rs=pst.executeQuery();
+            rs.next();
+            id=rs.getInt("ordid");
+        } catch (SQLException e) {
+            // TODO Auto-generated catch block
+            e.printStackTrace();
+        }
+        assertEquals(id, new OrderDAO().generateOrderId());
+		
+	}
+	@Test
+	public void orderPlaceTest() {
+		assertEquals("order placed....",new OrderDAO().orderPlace(2, 1));
+		assertEquals("insufficient quantity",new OrderDAO().orderPlace(2, 500));
+		
+	}
+	
+
+}
